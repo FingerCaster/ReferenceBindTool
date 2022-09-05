@@ -55,12 +55,12 @@ namespace ReferenceBindTool.Editor
             }
             AddSettingDataPopWindow.Show(buttonrect,names, value =>
             {
-                Debug.Log($"AddCallBack Name:{value}");
                 int index = list.count;
                 list.serializedProperty.arraySize++;
                 var newElement = list.serializedProperty.GetArrayElementAtIndex(index);
                 newElement.FindPropertyRelative("m_Name").stringValue = value;
-                list.Select(index);
+                newElement.isExpanded = true;
+                list.index = index;
                 EditorUtility.SetDirty(list.serializedProperty.serializedObject.targetObject);
                 list.serializedProperty.serializedObject.ApplyModifiedProperties();
             });

@@ -254,7 +254,7 @@ namespace ReferenceBindTool.Editor
                 return;
             }
 
-            m_Searchable ??= serializedObject.FindProperty("m_SettingDataSearchable");
+            m_Searchable = m_Searchable ?? serializedObject.FindProperty("m_SettingDataSearchable");
             EditorGUILayout.PropertyField(m_Searchable);
             if (m_Target.SettingDataSearchable.Select != m_LastSettingDataNameIndex)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.Plastic.Newtonsoft.Json.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,7 +22,7 @@ namespace ReferenceBindTool.Editor
         {
             AddSettingDataPopWindow addSettingDataPopWindow = new AddSettingDataPopWindow(addCallback, existNames);
             rect = new Rect(rect.x + 100, rect.y,rect.width, rect.height);
-            Debug.Log(rect);
+
             PopupWindow.Show(rect, addSettingDataPopWindow);
         }
 
