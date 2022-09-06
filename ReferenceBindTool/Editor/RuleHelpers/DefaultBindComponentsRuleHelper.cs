@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ReferenceBindTool.Runtime;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using BindObjectData =  ReferenceBindTool.Runtime.ReferenceBindComponent.BindObjectData;
+using BindObjectData = ReferenceBindTool.Runtime.ReferenceBindComponent.BindObjectData;
 
 namespace ReferenceBindTool.Editor
 {
@@ -24,41 +21,42 @@ namespace ReferenceBindTool.Editor
         /// <param name="ruleHelper"></param>
         /// <param name="target"></param>
         /// <param name="bindList"></param>
-        void GetBindData(DefaultBindComponentsRuleHelper ruleHelper,Transform target,List<(string,Component)> bindList);
+        void GetBindData(DefaultBindComponentsRuleHelper ruleHelper, Transform target,
+            List<(string, Component)> bindList);
     }
 
     public class DefaultBindRule : IBindRule
     {
         public string Prefix => "BD_";
 
-        private List<Type> m_BindTypes =  new List<Type>()
+        private List<Type> m_BindTypes = new List<Type>()
         {
-            typeof(Transform),
-            typeof(RectTransform),
-            typeof(Animation),
-            typeof(Canvas),
-            typeof(CanvasGroup),
-            typeof(VerticalLayoutGroup),
-            typeof(HorizontalLayoutGroup),
-            typeof(GridLayoutGroup),
-            typeof(ToggleGroup),
-            typeof(Button),
-            typeof(Image),
-            typeof(RawImage),
-            typeof(Text),
-            typeof(TMP_Text),
-            typeof(InputField),
-            typeof(TMP_InputField),
-            typeof(Slider),
-            typeof(Mask),
-            typeof(RectMask2D),
-            typeof(Toggle),
-            typeof(Scrollbar),
-            typeof(ScrollRect),
-            typeof(Dropdown),
-            typeof(TMP_Dropdown),
-            typeof(Camera),
-            typeof(EventTrigger),
+            // typeof(Transform),
+            // typeof(RectTransform),
+            // typeof(Animation),
+            // typeof(Canvas),
+            // typeof(CanvasGroup),
+            // typeof(VerticalLayoutGroup),
+            // typeof(HorizontalLayoutGroup),
+            // typeof(GridLayoutGroup),
+            // typeof(ToggleGroup),
+            // typeof(Button),
+            // typeof(Image),
+            // typeof(RawImage),
+            // typeof(Text),
+            // typeof(TMP_Text),
+            // typeof(InputField),
+            // typeof(TMP_InputField),
+            // typeof(Slider),
+            // typeof(Mask),
+            // typeof(RectMask2D),
+            // typeof(Toggle),
+            // typeof(Scrollbar),
+            // typeof(ScrollRect),
+            // typeof(Dropdown),
+            // typeof(TMP_Dropdown),
+            // typeof(Camera),
+            // typeof(EventTrigger),
         };
 
         public List<Type> BindTypes => m_BindTypes;
@@ -68,8 +66,14 @@ namespace ReferenceBindTool.Editor
             m_BindTypes = m_BindTypes.Distinct().ToList();
         }
 
-        public void GetBindData(DefaultBindComponentsRuleHelper ruleHelper,Transform target, List<(string,Component)> bindList)
+        public void GetBindData(DefaultBindComponentsRuleHelper ruleHelper, Transform target,
+            List<(string, Component)> bindList)
         {
+            if (m_BindTypes.Count == 0)
+            {
+                throw new Exception($"{nameof(DefaultBindRule)} 前缀{Prefix}的可绑定类型列表为空。请先添加绑定类型。");
+            }
+
             if (target == null || string.IsNullOrEmpty(target.name) || !target.name.StartsWith(Prefix))
             {
                 return;
@@ -80,7 +84,7 @@ namespace ReferenceBindTool.Editor
                 Component component = target.GetComponent(BindTypes[i]);
                 if (component != null)
                 {
-                    bindList.Add((ruleHelper.GetDefaultFieldName(component),component));
+                    bindList.Add((ruleHelper.GetDefaultFieldName(component), component));
                 }
             }
         }
@@ -92,7 +96,7 @@ namespace ReferenceBindTool.Editor
         {
             new DefaultBindRule(),
         };
-        
+
         public string GetDefaultFieldName(Component component)
         {
             string gameObjectName = component.gameObject.name;
@@ -102,6 +106,7 @@ namespace ReferenceBindTool.Editor
                 gameObjectName = gameObjectName.Substring(m_BindRules[i].Prefix.Length);
                 break;
             }
+
             return $"{component.GetType().Name}_{gameObjectName}".Replace(' ', '_');
         }
 
@@ -111,30 +116,37 @@ namespace ReferenceBindTool.Editor
             return !Regex.IsMatch(fieldName, regex);
         }
 
-        public void BindComponents(GameObject gameObject, List<ReferenceBindComponent.BindObjectData> bindComponents, Action<List<(string, Component)>> bindAction)
+        public void BindComponents(GameObject gameObject, List<BindObjectData> bindComponents,
+            Action<List<(string, Component)>> bindAction)
         {
+            if (m_BindRules == null || m_BindRules.Count == 0)
+            {
+                throw new Exception($"{nameof(DefaultBindComponentsRuleHelper)} 没有前缀规则 请添加后在进行绑定。");
+            }
+
             Transform[] children = gameObject.transform.GetComponentsInChildren<Transform>(true);
-            List<(string fieldName,Component bindComponent)> bindList = new List<(string,Component)>();
-            List<(string fieldName,Component bindComponent)> tempBindList = new List<(string,Component)>();
+            List<(string fieldName, Component bindComponent)> bindList = new List<(string, Component)>();
+            List<(string fieldName, Component bindComponent)> tempBindList = new List<(string, Component)>();
             foreach (Transform child in children)
             {
                 tempBindList.Clear();
-                foreach (var bindRule in m_BindRules)
+                foreach (IBindRule bindRule in m_BindRules)
                 {
                     if (!child.name.StartsWith(bindRule.Prefix))
                     {
                         continue;
                     }
 
-                    bindRule.GetBindData(this,child, tempBindList);
+                    bindRule.GetBindData(this, child, tempBindList);
                     for (int i = 0; i < tempBindList.Count; i++)
                     {
                         var bindData = bindComponents.Find(_ => _.BindObject == tempBindList[i].bindComponent);
                         string fieldName = bindData == null ? tempBindList[i].fieldName : bindData.FieldName;
-                        bindList.Add((fieldName,tempBindList[i].bindComponent));
+                        bindList.Add((fieldName, tempBindList[i].bindComponent));
                     }
                 }
             }
+
             bindAction.Invoke(bindList);
         }
     }

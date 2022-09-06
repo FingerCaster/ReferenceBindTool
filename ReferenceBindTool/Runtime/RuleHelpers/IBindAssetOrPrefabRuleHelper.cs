@@ -5,7 +5,7 @@ using BindObjectData =  ReferenceBindTool.Runtime.ReferenceBindComponent.BindObj
 
 namespace ReferenceBindTool.Runtime
 {
-    public interface IBindAssetOrPrefabRuleHelper
+    public interface IBindAssetOrPrefabRuleHelper : IRuleHelper
     {
         /// <summary>
         /// 获取默认字段名

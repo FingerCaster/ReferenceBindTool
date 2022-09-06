@@ -73,7 +73,7 @@ namespace ReferenceBindTool.Editor
             }
 
             self.BindComponentsRuleHelperTypeName = ruleHelperName;
-            IBindComponentsRuleHelper helper = (IBindComponentsRuleHelper) HelperUtility.CreateHelperInstance(self.BindComponentsRuleHelperTypeName);
+            IBindComponentsRuleHelper helper = (IBindComponentsRuleHelper) RuleHelperUtility.CreateHelperInstance<IBindComponentsRuleHelper>(self.BindComponentsRuleHelperTypeName);
             self.BindComponentsRuleHelper = helper;
             
         }
@@ -90,8 +90,7 @@ namespace ReferenceBindTool.Editor
             }
 
             self.CodeGeneratorRuleHelperTypeName = ruleHelperName;
-            ICodeGeneratorRuleHelper helper =
-                (ICodeGeneratorRuleHelper)HelperUtility.CreateHelperInstance(self.CodeGeneratorRuleHelperTypeName);
+            ICodeGeneratorRuleHelper helper = RuleHelperUtility.CreateHelperInstance<ICodeGeneratorRuleHelper>(self.CodeGeneratorRuleHelperTypeName);
             self.CodeGeneratorRuleHelper = helper;
         }
         

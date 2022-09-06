@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ReferenceBindTool.Runtime;
 using UnityEngine;
-using BindObjectData =  ReferenceBindTool.Runtime.ReferenceBindComponent.BindObjectData;
 
 namespace ReferenceBindTool.Editor
 {

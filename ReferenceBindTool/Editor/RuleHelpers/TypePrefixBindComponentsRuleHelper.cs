@@ -18,30 +18,30 @@ namespace ReferenceBindTool.Editor
         /// </summary>
         private Dictionary<string, Type> m_PrefixesDict = new Dictionary<string, Type>()
         {
-            {"Trans", typeof(Transform)},
-            {"OldAnim", typeof(Animation)},
-            {"NewAnim", typeof(Animator)},
-
-            {"Rect", typeof(RectTransform)},
-            {"Canvas", typeof(Canvas)},
-            {"Group",typeof(CanvasGroup)},
-            {"VGroup",typeof(VerticalLayoutGroup)},
-            {"HGroup",typeof(HorizontalLayoutGroup)},
-            {"GGroup",typeof(GridLayoutGroup)},
-            {"TGroup",typeof(ToggleGroup)},
-
-            {"Btn",typeof(Button)},
-            {"Img",typeof(Image)},
-            {"RImg",typeof(RawImage)},
-            {"Txt",typeof(Text)},
-            {"Input",typeof(InputField)},
-            {"Slider",typeof(Slider)},
-            {"Mask",typeof(Mask)},
-            {"Mask2D",typeof(RectMask2D)},
-            {"Tog",typeof(Toggle)},
-            {"Sbar",typeof(Scrollbar)},
-            {"SRect",typeof(ScrollRect)},
-            {"Drop",typeof(Dropdown)},
+            // {"Trans", typeof(Transform)},
+            // {"OldAnim", typeof(Animation)},
+            // {"NewAnim", typeof(Animator)},
+            //
+            // {"Rect", typeof(RectTransform)},
+            // {"Canvas", typeof(Canvas)},
+            // {"Group",typeof(CanvasGroup)},
+            // {"VGroup",typeof(VerticalLayoutGroup)},
+            // {"HGroup",typeof(HorizontalLayoutGroup)},
+            // {"GGroup",typeof(GridLayoutGroup)},
+            // {"TGroup",typeof(ToggleGroup)},
+            //
+            // {"Btn",typeof(Button)},
+            // {"Img",typeof(Image)},
+            // {"RImg",typeof(RawImage)},
+            // {"Txt",typeof(Text)},
+            // {"Input",typeof(InputField)},
+            // {"Slider",typeof(Slider)},
+            // {"Mask",typeof(Mask)},
+            // {"Mask2D",typeof(RectMask2D)},
+            // {"Tog",typeof(Toggle)},
+            // {"Sbar",typeof(Scrollbar)},
+            // {"SRect",typeof(ScrollRect)},
+            // {"Drop",typeof(Dropdown)},
         };
         
         public string GetDefaultFieldName(Component component)
@@ -70,6 +70,10 @@ namespace ReferenceBindTool.Editor
 
         public void BindComponents(GameObject gameObject, List<ReferenceBindComponent.BindObjectData> bindComponents, Action<List<(string, Component)>> bindAction)
         {
+            if (m_PrefixesDict == null || m_PrefixesDict.Count == 0)
+            {
+                throw new Exception($"{nameof(TypePrefixBindComponentsRuleHelper)} 没有前缀规则 请添加后在进行绑定。");
+            }
             List<(string fieldName,Component bindComponent)> bindList = new List<(string,Component)>();
             Transform[] children = gameObject.GetComponentsInChildren<Transform>(true);
             foreach (Transform child in children)

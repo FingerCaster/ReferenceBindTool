@@ -25,9 +25,9 @@ namespace ReferenceBindTool.Editor
         private int m_LastSettingDataNameIndex;
         private bool m_SettingDataError;
 
-        private HelperInfo<IBindComponentsRuleHelper> m_BindComponentsHelperInfo;
-        private HelperInfo<IBindAssetOrPrefabRuleHelper> m_BindAssetOrPrefabRuleHelperInfo;
-        private HelperInfo<ICodeGeneratorRuleHelper> m_CodeGeneratorRuleHelperInfo;
+        private RuleHelperInfo<IBindComponentsRuleHelper> m_BindComponentsRuleHelperInfo;
+        private RuleHelperInfo<IBindAssetOrPrefabRuleHelper> m_BindAssetOrPrefabRuleHelperInfo;
+        private RuleHelperInfo<ICodeGeneratorRuleHelper> m_CodeGeneratorRuleHelperInfo;
 
         // private bool m_IsInitError = false;
         private InitError m_InitError = InitError.None;
@@ -118,7 +118,7 @@ namespace ReferenceBindTool.Editor
                     : m_Target.BindAssetOrPrefabRuleHelperTypeName);
 
             m_BindAssetOrPrefabRuleHelperInfo =
-                new HelperInfo<IBindAssetOrPrefabRuleHelper>("m_BindAssetOrPrefabRule", null);
+                new RuleHelperInfo<IBindAssetOrPrefabRuleHelper>("m_BindAssetOrPrefabRule", null);
 
             m_BindAssetOrPrefabRuleHelperInfo.Init(m_Target.BindAssetOrPrefabRuleHelperTypeName, typeName =>
             {
@@ -130,9 +130,9 @@ namespace ReferenceBindTool.Editor
                 ? typeof(DefaultBindComponentsRuleHelper).FullName
                 : m_Target.BindComponentsRuleHelperTypeName);
 
-            m_BindComponentsHelperInfo = new HelperInfo<IBindComponentsRuleHelper>("m_BindComponentsRule", null);
+            m_BindComponentsRuleHelperInfo = new RuleHelperInfo<IBindComponentsRuleHelper>("m_BindComponentsRule", null);
 
-            m_BindComponentsHelperInfo.Init(m_Target.BindComponentsRuleHelperTypeName, typeName =>
+            m_BindComponentsRuleHelperInfo.Init(m_Target.BindComponentsRuleHelperTypeName, typeName =>
             {
                 m_Target.SetBindComponentsRuleHelperTypeName(typeName);
                 return m_Target.BindComponentsRuleHelperTypeName;
@@ -141,7 +141,7 @@ namespace ReferenceBindTool.Editor
                 ? typeof(DefaultCodeGeneratorRuleHelper).FullName
                 : m_Target.CodeGeneratorRuleHelperTypeName);
 
-            m_CodeGeneratorRuleHelperInfo = new HelperInfo<ICodeGeneratorRuleHelper>("m_CodeGeneratorRule", new[]
+            m_CodeGeneratorRuleHelperInfo = new RuleHelperInfo<ICodeGeneratorRuleHelper>("m_CodeGeneratorRule", new[]
             {
                 typeof(TransformFindCodeGeneratorRuleHelper).FullName
             });
@@ -163,7 +163,7 @@ namespace ReferenceBindTool.Editor
         void RefreshHelperTypeNames()
         {
             m_BindAssetOrPrefabRuleHelperInfo.Refresh();
-            m_BindComponentsHelperInfo.Refresh();
+            m_BindComponentsRuleHelperInfo.Refresh();
             m_CodeGeneratorRuleHelperInfo.Refresh();
             serializedObject.ApplyModifiedProperties();
         }
@@ -174,7 +174,7 @@ namespace ReferenceBindTool.Editor
         private void DrawHelperSelect()
         {
             m_BindAssetOrPrefabRuleHelperInfo.Draw();
-            m_BindComponentsHelperInfo.Draw();
+            m_BindComponentsRuleHelperInfo.Draw();
             m_CodeGeneratorRuleHelperInfo.Draw();
         }
 

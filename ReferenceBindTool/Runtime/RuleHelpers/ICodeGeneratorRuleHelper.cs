@@ -31,7 +31,7 @@ namespace ReferenceBindTool.Runtime
         }
     }
 
-    public interface ICodeGeneratorRuleHelper
+    public interface ICodeGeneratorRuleHelper : IRuleHelper
     {
         /// <summary>
         /// 获取生成代码字符串

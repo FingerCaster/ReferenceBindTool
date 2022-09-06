@@ -19,7 +19,7 @@ namespace ReferenceBindTool.Editor
         /// </summary>
         public static void RuleBindComponents(this ReferenceBindComponent self)
         {
-            self.BindComponentsRuleHelper.BindComponents(self.gameObject, self.BindComponents,bindList =>
+            self.BindComponentsRuleHelper?.BindComponents(self.gameObject, self.BindComponents,bindList =>
             {
                 self.BindComponents.Clear();
                 foreach ((string fieldName, Component bindComponent) item in bindList)
@@ -35,7 +35,7 @@ namespace ReferenceBindTool.Editor
         /// </summary>
         public static void RuleBindAssetsOrPrefabs(this ReferenceBindComponent self,string fieldName,Object obj)
         {
-            self.BindAssetOrPrefabRuleHelper.BindAssetOrPrefab(fieldName,obj,
+            self.BindAssetOrPrefabRuleHelper?.BindAssetOrPrefab(fieldName,obj,
                 isCanAdd =>
                 {
                     if (isCanAdd)
@@ -377,8 +377,7 @@ namespace ReferenceBindTool.Editor
             }
 
             self.BindComponentsRuleHelperTypeName = ruleHelperName;
-            IBindComponentsRuleHelper helper =
-                (IBindComponentsRuleHelper)HelperUtility.CreateHelperInstance(self.BindComponentsRuleHelperTypeName);
+            IBindComponentsRuleHelper helper =RuleHelperUtility.CreateHelperInstance<IBindComponentsRuleHelper>(self.BindComponentsRuleHelperTypeName);
             self.BindComponentsRuleHelper = helper;
             EditorUtility.SetDirty(self);
         }
@@ -396,8 +395,7 @@ namespace ReferenceBindTool.Editor
             }
 
             self.BindAssetOrPrefabRuleHelperTypeName = ruleHelperName;
-            IBindAssetOrPrefabRuleHelper helper =
-                (IBindAssetOrPrefabRuleHelper) HelperUtility.CreateHelperInstance(self.BindAssetOrPrefabRuleHelperTypeName);
+            IBindAssetOrPrefabRuleHelper helper = RuleHelperUtility.CreateHelperInstance<IBindAssetOrPrefabRuleHelper>(self.BindAssetOrPrefabRuleHelperTypeName);
             self.BindAssetOrPrefabRuleHelper = helper;
             EditorUtility.SetDirty(self);
         }
@@ -415,8 +413,7 @@ namespace ReferenceBindTool.Editor
             }
 
             self.CodeGeneratorRuleHelperTypeName = ruleHelperName;
-            ICodeGeneratorRuleHelper helper =
-                (ICodeGeneratorRuleHelper)HelperUtility.CreateHelperInstance(self.CodeGeneratorRuleHelperTypeName);
+            ICodeGeneratorRuleHelper helper = RuleHelperUtility.CreateHelperInstance<ICodeGeneratorRuleHelper>(self.CodeGeneratorRuleHelperTypeName);
             self.CodeGeneratorRuleHelper = helper;
             EditorUtility.SetDirty(self);
         }

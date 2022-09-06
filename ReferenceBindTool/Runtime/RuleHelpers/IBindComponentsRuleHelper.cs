@@ -9,7 +9,7 @@ namespace ReferenceBindTool.Runtime
     /// <summary>
     /// 自动绑定规则辅助器接口
     /// </summary>
-    public interface IBindComponentsRuleHelper
+    public interface IBindComponentsRuleHelper : IRuleHelper
     {
         /// <summary>
         /// 获取默认字段名

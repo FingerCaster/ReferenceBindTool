@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using ReferenceBindTool.Runtime;
 using UnityEditor;
 using UnityEngine;
-using BindObjectData = ReferenceBindTool.Runtime.ReferenceBindComponent.BindObjectData;
+
 namespace ReferenceBindTool.Editor
 {
     public class SelectTreeBindComponentsRuleHelper : IBindComponentsRuleHelper
