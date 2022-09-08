@@ -389,7 +389,7 @@ namespace ReferenceBindTool.Editor
                 var bindDataList = new List<ReferenceBindComponent.BindObjectData>(m_Target.GetAllBindObjectsCount());
                 bindDataList.AddRange(m_Target.BindAssetsOrPrefabs);
                 bindDataList.AddRange(m_Target.BindComponents);
-                m_Target.CodeGeneratorRuleHelper.GeneratorCodeAndWriteToFile(bindDataList,
+                m_Target.GetCodeGeneratorRuleHelper().GeneratorCodeAndWriteToFile(bindDataList,
                     m_Target.CodeGeneratorSettingData.Namespace, className, m_Target.CodeGeneratorSettingData.CodePath,
                     null);
             }
@@ -463,7 +463,7 @@ namespace ReferenceBindTool.Editor
             if (GUILayout.Button("绑定", GUILayout.Width(50)))
             {
                 m_Target.RuleBindAssetsOrPrefabs(
-                    m_Target.BindAssetOrPrefabRuleHelper.GetDefaultFieldName(m_NeedBindObject),
+                    m_Target.GetBindAssetOrPrefabRuleHelper().GetDefaultFieldName(m_NeedBindObject),
                     m_NeedBindObject);
                 m_NeedBindObject = null;
             }
@@ -594,9 +594,9 @@ namespace ReferenceBindTool.Editor
                     {
                         bool isComponent = bindObjectData.BindObject is Component;
                         bindObjectData.FieldName = isComponent
-                            ? m_Target.BindComponentsRuleHelper.GetDefaultFieldName(
+                            ? m_Target.GetBindComponentsRuleHelper().GetDefaultFieldName(
                                 (Component)bindObjectData.BindObject)
-                            : m_Target.BindAssetOrPrefabRuleHelper.GetDefaultFieldName(bindObjectData.BindObject);
+                            : m_Target.GetBindAssetOrPrefabRuleHelper().GetDefaultFieldName(bindObjectData.BindObject);
 
                         Refresh();
                     }, bindObjectData);

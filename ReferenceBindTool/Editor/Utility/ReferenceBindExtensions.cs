@@ -19,7 +19,7 @@ namespace ReferenceBindTool.Editor
         /// </summary>
         public static void RuleBindComponents(this ReferenceBindComponent self)
         {
-            self.BindComponentsRuleHelper?.BindComponents(self.gameObject, self.BindComponents,bindList =>
+            self.GetBindComponentsRuleHelper()?.BindComponents(self.gameObject, self.BindComponents,bindList =>
             {
                 self.BindComponents.Clear();
                 foreach ((string fieldName, Component bindComponent) item in bindList)
@@ -35,7 +35,7 @@ namespace ReferenceBindTool.Editor
         /// </summary>
         public static void RuleBindAssetsOrPrefabs(this ReferenceBindComponent self,string fieldName,Object obj)
         {
-            self.BindAssetOrPrefabRuleHelper?.BindAssetOrPrefab(fieldName,obj,
+            self.GetBindAssetOrPrefabRuleHelper()?.BindAssetOrPrefab(fieldName,obj,
                 isCanAdd =>
                 {
                     if (isCanAdd)
@@ -157,7 +157,7 @@ namespace ReferenceBindTool.Editor
 
             self.BindAssetsOrPrefabs.Add(new BindObjectData(isRepeat, name, bindObject)
             {
-                FieldNameIsInvalid = self.BindAssetOrPrefabRuleHelper.CheckFieldNameIsInvalid(name)
+                FieldNameIsInvalid = self.GetBindAssetOrPrefabRuleHelper().CheckFieldNameIsInvalid(name)
             });
             self.SyncBindObjects();
         }
@@ -205,7 +205,7 @@ namespace ReferenceBindTool.Editor
 
             self.BindComponents.Add(new ReferenceBindComponent.BindObjectData(isRepeat, name, bindComponent)
             {
-                FieldNameIsInvalid = self.BindComponentsRuleHelper.CheckFieldNameIsInvalid(name)
+                FieldNameIsInvalid = self.GetBindComponentsRuleHelper().CheckFieldNameIsInvalid(name)
             });
             if (isSyncBindObject)
             {
@@ -255,7 +255,7 @@ namespace ReferenceBindTool.Editor
             for (; i < tempList.Count; i++)
             {
                 var tempData = tempList[i];
-                self.AddBindAssetsOrPrefabs(self.BindAssetOrPrefabRuleHelper.GetDefaultFieldName(tempData.BindObject),
+                self.AddBindAssetsOrPrefabs(self.GetBindAssetOrPrefabRuleHelper().GetDefaultFieldName(tempData.BindObject),
                     tempData.BindObject);
             }
 
@@ -264,7 +264,7 @@ namespace ReferenceBindTool.Editor
             for (; i < tempList.Count; i++)
             {
                 var tempData = tempList[i];
-                self.AddBindComponent(self.BindComponentsRuleHelper.GetDefaultFieldName((Component)tempData.BindObject),
+                self.AddBindComponent(self.GetBindComponentsRuleHelper().GetDefaultFieldName((Component)tempData.BindObject),
                     (Component)tempData.BindObject);
             }
             self.SyncBindObjects();
@@ -294,7 +294,7 @@ namespace ReferenceBindTool.Editor
         /// <param name="data"></param>
         public static void SetSettingData(this ReferenceBindComponent self, CodeGeneratorSettingData data)
         {
-            if (self.CodeGeneratorSettingData == data)
+            if (self.CodeGeneratorSettingData.Equals(data))
             {
                 return;
             }
@@ -359,6 +359,23 @@ namespace ReferenceBindTool.Editor
         /// <param name="select"></param>
         public static void SetSearchable(this ReferenceBindComponent self, string[] names, int select)
         {
+            if ( self.SettingDataSearchable.Select == select || names.Length == self.SettingDataSearchable.Names.Length)
+            {
+                bool isChanged = false;
+                for (int i = 0; i < self.SettingDataSearchable.Names.Length; i++)
+                {
+                    if (self.SettingDataSearchable.Names[i] != names[i] )
+                    {
+                        isChanged = true;
+                        break;
+                    }
+                }
+
+                if (!isChanged)
+                {
+                    return;
+                }
+            }
             self.SettingDataSearchable.Select = select;
             self.SettingDataSearchable.Names = names;
             EditorUtility.SetDirty(self);
@@ -371,14 +388,12 @@ namespace ReferenceBindTool.Editor
         /// <param name="ruleHelperName"></param>
         public static void SetBindComponentsRuleHelperTypeName(this ReferenceBindComponent self, string ruleHelperName)
         {
-            if (self.BindComponentsRuleHelperTypeName == ruleHelperName && self.BindComponentsRuleHelper != null)
+            if (self.BindComponentsRuleHelperTypeName == ruleHelperName)
             {
                 return;
             }
 
             self.BindComponentsRuleHelperTypeName = ruleHelperName;
-            IBindComponentsRuleHelper helper =RuleHelperUtility.CreateHelperInstance<IBindComponentsRuleHelper>(self.BindComponentsRuleHelperTypeName);
-            self.BindComponentsRuleHelper = helper;
             EditorUtility.SetDirty(self);
         }
         
@@ -389,14 +404,12 @@ namespace ReferenceBindTool.Editor
         /// <param name="ruleHelperName"></param>
         public static void SetBindAssetOrPrefabRuleHelperTypeName(this ReferenceBindComponent self, string ruleHelperName)
         {
-            if (self.BindAssetOrPrefabRuleHelperTypeName == ruleHelperName && self.BindAssetOrPrefabRuleHelper != null)
+            if (self.BindAssetOrPrefabRuleHelperTypeName == ruleHelperName)
             {
                 return;
             }
 
             self.BindAssetOrPrefabRuleHelperTypeName = ruleHelperName;
-            IBindAssetOrPrefabRuleHelper helper = RuleHelperUtility.CreateHelperInstance<IBindAssetOrPrefabRuleHelper>(self.BindAssetOrPrefabRuleHelperTypeName);
-            self.BindAssetOrPrefabRuleHelper = helper;
             EditorUtility.SetDirty(self);
         }
         
@@ -407,15 +420,53 @@ namespace ReferenceBindTool.Editor
         /// <param name="ruleHelperName"></param>
         public static void SetCodeGeneratorRuleHelperTypeName(this ReferenceBindComponent self, string ruleHelperName)
         {
-            if (self.CodeGeneratorRuleHelperTypeName == ruleHelperName && self.CodeGeneratorRuleHelper != null)
+            if (self.CodeGeneratorRuleHelperTypeName == ruleHelperName )
             {
                 return;
             }
 
             self.CodeGeneratorRuleHelperTypeName = ruleHelperName;
-            ICodeGeneratorRuleHelper helper = RuleHelperUtility.CreateHelperInstance<ICodeGeneratorRuleHelper>(self.CodeGeneratorRuleHelperTypeName);
-            self.CodeGeneratorRuleHelper = helper;
             EditorUtility.SetDirty(self);
+        }
+
+        private static Dictionary<string, IRuleHelper> s_RuleHelpersCache = new Dictionary<string, IRuleHelper>();
+        private static T GetRuleHelper<T>(ReferenceBindComponent self,string ruleHelperTypeName) where T : IRuleHelper
+        {
+            if (!s_RuleHelpersCache.TryGetValue(ruleHelperTypeName,out  IRuleHelper value))
+            {
+                value = RuleHelperUtility.CreateHelperInstance<IRuleHelper>(ruleHelperTypeName);
+                s_RuleHelpersCache.Add(ruleHelperTypeName,value);
+            }
+
+            return (T) value;
+        }
+
+        /// <summary>
+        /// 获取绑定资源预制体规则
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        public static IBindAssetOrPrefabRuleHelper GetBindAssetOrPrefabRuleHelper(this ReferenceBindComponent self)
+        {
+            return GetRuleHelper<IBindAssetOrPrefabRuleHelper>(self, self.BindAssetOrPrefabRuleHelperTypeName);
+        }
+        /// <summary>
+        /// 获取绑定组件规则
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        public static IBindComponentsRuleHelper GetBindComponentsRuleHelper(this ReferenceBindComponent self)
+        {
+            return GetRuleHelper<IBindComponentsRuleHelper>(self, self.BindComponentsRuleHelperTypeName);
+        }
+        /// <summary>
+        /// 获取代码生成规则
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        public static ICodeGeneratorRuleHelper GetCodeGeneratorRuleHelper(this ReferenceBindComponent self)
+        {
+            return GetRuleHelper<ICodeGeneratorRuleHelper>(self, self.CodeGeneratorRuleHelperTypeName);
         }
     }
 }

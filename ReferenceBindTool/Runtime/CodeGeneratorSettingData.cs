@@ -57,6 +57,11 @@ namespace ReferenceBindTool.Runtime
                    string.IsNullOrEmpty(m_CodeFolderPath) &&
                    string.IsNullOrEmpty(m_Namespace);
         }
+
+        public bool Equals(CodeGeneratorSettingData data)
+        {
+            return Name == data.m_Name && m_CodeFolderPath == data.m_CodeFolderPath && m_Namespace == data.m_Namespace;
+        }
     }
 }
 

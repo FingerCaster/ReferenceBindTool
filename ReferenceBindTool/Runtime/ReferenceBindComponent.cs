@@ -177,32 +177,7 @@ namespace ReferenceBindTool.Runtime
         /// </summary>
         public List<Object> BindObjects => m_BindObjects;
         
-        /// <summary>
-        /// 自动绑定组件规则
-        /// </summary>
-        public IBindComponentsRuleHelper BindComponentsRuleHelper
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 自动绑定组件规则
-        /// </summary>
-        public IBindAssetOrPrefabRuleHelper BindAssetOrPrefabRuleHelper
-        {
-            get;
-            set;
-        }
-        /// <summary>
-        /// 代码生成规则
-        /// </summary>
-        public ICodeGeneratorRuleHelper CodeGeneratorRuleHelper
-        {
-            get;
-            set;
-        }
-        
+      
         /// <summary>
         /// 自动绑定组件规则类型名称
         /// </summary>

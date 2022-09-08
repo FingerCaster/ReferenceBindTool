@@ -13,7 +13,7 @@ namespace ReferenceBindTool.Editor
         private static readonly List<Type> s_HelperTypes = new List<Type>();
         static RuleHelperUtility()
         {
-            List<string> assembles = new List<string>()
+            List<string> assemblies = new List<string>()
             {
                 //unity 默认程序集。
                 "Assembly-CSharp",
@@ -24,7 +24,7 @@ namespace ReferenceBindTool.Editor
             };
 #if UNITY_2017_3_OR_NEWER
             //2017.3 之后可以使用asmdef 自定义程序集 这里查询所有自定义程序集中的RuleHelper.
-            assembles.AddRange(AssetDatabase.FindAssets("t:AssemblyDefinitionAsset")
+            assemblies.AddRange(AssetDatabase.FindAssets("t:AssemblyDefinitionAsset")
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Where(_ => !string.IsNullOrEmpty(_))
                 .Select(_ =>
@@ -49,11 +49,13 @@ namespace ReferenceBindTool.Editor
                 }).Where(_ => _ != null)
                 .Distinct()
                 .ToList());
+            
+            
 #endif
            
-            foreach (string assemble in assembles)
+            foreach (string assembly in assemblies)
             {
-                AddHelpers(assemble);
+                AddHelpers(assembly);
             }
         }
 
