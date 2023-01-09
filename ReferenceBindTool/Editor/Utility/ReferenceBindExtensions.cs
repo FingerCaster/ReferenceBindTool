@@ -294,7 +294,7 @@ namespace ReferenceBindTool.Editor
         /// <param name="data"></param>
         public static void SetSettingData(this ReferenceBindComponent self, CodeGeneratorSettingData data)
         {
-            if (self.CodeGeneratorSettingData.Equals(data))
+            if (self.CodeGeneratorSettingData != null && self.CodeGeneratorSettingData.Equals(data))
             {
                 return;
             }
@@ -359,7 +359,8 @@ namespace ReferenceBindTool.Editor
         /// <param name="select"></param>
         public static void SetSearchable(this ReferenceBindComponent self, string[] names, int select)
         {
-            if ( self.SettingDataSearchable.Select == select || names.Length == self.SettingDataSearchable.Names.Length)
+            if (self.SettingDataSearchable.Select == select &&
+                (self.SettingDataSearchable.Names != null && names.Length == self.SettingDataSearchable.Names.Length))
             {
                 bool isChanged = false;
                 for (int i = 0; i < self.SettingDataSearchable.Names.Length; i++)
